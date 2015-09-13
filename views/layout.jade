@@ -5,13 +5,17 @@ html
     meta(name='viewport', content='width=device-width, initial-scale=1')
     title= title
     link(rel='stylesheet', href='/components/bootstrap/dist/css/bootstrap.min.css')
+    link(rel='stylesheet', href='/components/pnotify/src/pnotify.core.min.css')
     link(rel='stylesheet', href='/stylesheets/style.css')
     script(type='text/javascript', src='/components/jquery/dist/jquery.min.js')
     script(type='text/javascript', src='/components/bootstrap/dist/js/bootstrap.min.js')
+    script(type='text/javascript', src='/components/pnotify/src/pnotify.core.min.js')
     script(type='text/javascript', src='http://#{hostname}:#{socket_port}/socket.io/socket.io.js')
     script(type='text/javascript', src='/javascripts/adapter.js')
     script(type='text/javascript', src='/javascripts/script.js')
     script(type='text/javascript').
       var socket = io.connect('http://#{hostname}:#{socket_port}');
+      PNotify.prototype.options.styling = "bootstrap3";
+      PNotify.prototype.options.delay = 2000;
   body
     block content

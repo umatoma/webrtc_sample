@@ -61,6 +61,7 @@ $(document).ready(function() {
             sdp: description.sdp
           }
         );
+        createInfoNotify('オファーを送信しました');
       },
       // errorCallback
       function(err) {
@@ -77,6 +78,7 @@ $(document).ready(function() {
    * @param {Object} data
    */
   var onGetOfferMessage = function(data) {
+    createInfoNotify('オファーを受信しました');
     peerConnection = createPeerConnection();
     peerConnection.setRemoteDescription(new RTCSessionDescription(data));
   };
@@ -98,6 +100,7 @@ $(document).ready(function() {
             sdp: description.sdp
           }
         );
+        createInfoNotify('オファーに返答しました');
       },
       // errorCallback
       function(err) {
@@ -114,6 +117,7 @@ $(document).ready(function() {
    * @param {Object} data
    */
   var onGetAnswerMessage = function(data) {
+    createInfoNotify('オファーが許可されました');
     peerConnection.setRemoteDescription(new RTCSessionDescription(data));
   };
 
@@ -124,6 +128,18 @@ $(document).ready(function() {
    */
   var onGetCandidateMessage = function(data) {
     peerConnection.addIceCandidate(new RTCIceCandidate(data));
+  };
+
+  /**
+   * 通知を作成
+   *
+   * @param {String} text 通知メッセージ
+   */
+  var createInfoNotify = function(text) {
+    new PNotify({
+      text: text,
+      type: 'info'
+    });
   };
 
   // ------------------------------------------------------------ //
