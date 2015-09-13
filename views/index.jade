@@ -1,5 +1,25 @@
 extends layout
 
 block content
-  h1= title
-  p Welcome to #{title}
+  nav#header.navbar.navbar-fluid.navbar-inverse
+    .container-fluid
+      .navbar-header
+        a.navbar-brand(href='/') WebRTC
+
+  .container-fluid
+    h1= title
+    p Welcome to #{title}
+
+    .row
+      .col-md-3
+        .btn-group-vertical
+          .btn-group
+            button.btn.btn-default#btn_call ビデオ通話のリクエストを送信
+          .btn-group
+            button.btn.btn-default#btn_answer ビデオ通話リクエストを許可
+          .btn-group
+            button.btn.btn-default#btn_hungup ビデオ通話を切る
+      .col-md-6
+        video#video_self(autoplay)
+      .col-md-3
+        video#video_other(autoplay)
