@@ -3,6 +3,9 @@
 }
 
 video {
-  width: 360px;
-  height: 270px;
+  border: solid 1px #ddd;
+  width: 100%;
+  box-sizing: border-box;
+  margin: 8px auto;
+  background: #333;
 }
