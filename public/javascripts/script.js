@@ -79,7 +79,6 @@ $(document).ready(function() {
   var onGetOfferMessage = function(data) {
     peerConnection = createPeerConnection();
     peerConnection.setRemoteDescription(new RTCSessionDescription(data));
-    sendAnswer(data, peerConnection);
   };
 
   /**
@@ -149,6 +148,10 @@ $(document).ready(function() {
   $(document).on('click', '#btn_call', function() {
     peerConnection = createPeerConnection();
     sendOffer(peerConnection);
+  });
+
+  $(document).on('click', '#btn_answer', function() {
+    sendAnswer(peerConnection);
   });
 
   // ------------------------------------------------------------ //
