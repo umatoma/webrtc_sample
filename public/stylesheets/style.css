@@ -3,9 +3,13 @@
 }
 
 video {
-  border: solid 1px #ddd;
+  border: solid 1px #333;
   width: 100%;
   box-sizing: border-box;
   margin: 8px auto;
   background: #333;
+}
+
+#video_self {
+  border-color: red;
 }

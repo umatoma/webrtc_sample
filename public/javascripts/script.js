@@ -80,8 +80,13 @@ $(document).ready(function() {
     };
     pc.addStream(localStream);
     pc.addEventListener('addstream', function(event) {
+      var $col = $('<div>').attr('class', 'col-md-3');
       var $video = $('<video>').attr('autoplay', true);
-      $('#video_lists').append($video);
+      $col.append($video);
+      $('#video_lists').append($col);
+
+      $video.css('height', $video.width() * 3 / 4);
+
       attachMediaStream($video.get(0), event.stream);
     });
 
@@ -228,6 +233,9 @@ $(document).ready(function() {
   });
 
   // ------------------------------------------------------------ //
+
+  // ビデオのサイズを調整
+  $('#video_self').css('height', $('#video_self').width() * 3 / 4);
 
   // ブラウザからメディアデバイスの使用許可を求める
   getUserMedia(

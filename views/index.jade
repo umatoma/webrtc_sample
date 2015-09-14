@@ -10,12 +10,10 @@ block content
     h1= title
     p Welcome to #{title}
 
-    .row
+    button.btn.btn-primary.btn-block#btn_call
+      span.glyphicon.glyphicon-earphone
+      span &nbsp;Call
+
+    .row#video_lists
       .col-md-3
-        button.btn.btn-default.btn-block#btn_call ビデオ通話のリクエストを送信
-        button.btn.btn-default.btn-block#btn_answer ビデオ通話リクエストを許可
-        button.btn.btn-default.btn-block#btn_hungup ビデオ通話を切る
-      .col-md-6
         video#video_self(autoplay)
-      .col-md-3
-        #video_lists
