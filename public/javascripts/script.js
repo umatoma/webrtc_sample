@@ -37,15 +37,10 @@ $(document).ready(function() {
   // ------------------------------------------------------------ //
 
   /**
-   * 通信可能な相手にメッセージを送信
+   * Callメッセージを送信
    */
   var sendCallMessage = function() {
-    createInfoNotify('Callメッセージを送信しました');
-
-    socket.emit(
-      'message',
-      { type: 'call' }
-    );
+    socket.emit('message', { type: 'call' });
   };
 
   /**
@@ -56,22 +51,6 @@ $(document).ready(function() {
   var onGetCallMessage = function(data) {
     createInfoNotify('Callメッセージを受信しました');
 
-    var id = data.from;
-    socket.emit(
-      'message',
-      {
-        type: 'response',
-        sendto: id
-      }
-    );
-  };
-
-  /**
-   * Callに対する返事を受信した時
-   *
-   * @param {Object} data
-   */
-  var onGetResponseMessage = function(data) {
     var id = data.from;
     var peer = createPeerConnection();
     var connection = new Connection(id, peer);
@@ -230,9 +209,6 @@ $(document).ready(function() {
       case 'call':
         onGetCallMessage(data);
         break;
-      case 'response':
-        onGetResponseMessage(data);
-        break;
       case 'offer':
         onGetOfferMessage(data);
         break;
@@ -249,10 +225,6 @@ $(document).ready(function() {
 
   $(document).on('click', '#btn_call', function() {
     sendCallMessage();
-  });
-
-  $(document).on('click', '#btn_answer', function() {
-    //sendAnswer(peerConnection);
   });
 
   // ------------------------------------------------------------ //
