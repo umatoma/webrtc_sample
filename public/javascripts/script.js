@@ -10,11 +10,74 @@ $(document).ready(function() {
     }
   };
   var localStream = null;
-  var peerConnection = null;
+  var connections = {};
   var localVideo = document.getElementById('video_self');
-  var remoteVideo = document.getElementById('video_other');
 
   // ------------------------------------------------------------ //
+
+  /**
+   * Connection
+   *
+   * @param {String} id
+   * @param {RTCPeerConnection} peer
+   */
+  var Connection = function(id, peer) {
+    this.id = id;
+    this.peer = peer;
+  };
+
+  var getConnection = function(id) {
+    return connections[id];
+  };
+
+  var addConnection = function(connection) {
+    connections[connection.id] = connection;
+  };
+
+  // ------------------------------------------------------------ //
+
+  /**
+   * 通信可能な相手にメッセージを送信
+   */
+  var sendCallMessage = function() {
+    createInfoNotify('Callメッセージを送信しました');
+
+    socket.emit(
+      'message',
+      { type: 'call' }
+    );
+  };
+
+  /**
+   * Callメッセージを受信した時
+   *
+   * @param {Object} data
+   */
+  var onGetCallMessage = function(data) {
+    createInfoNotify('Callメッセージを受信しました');
+
+    var id = data.from;
+    socket.emit(
+      'message',
+      {
+        type: 'response',
+        sendto: id
+      }
+    );
+  };
+
+  /**
+   * Callに対する返事を受信した時
+   *
+   * @param {Object} data
+   */
+  var onGetResponseMessage = function(data) {
+    var id = data.from;
+    var peer = createPeerConnection();
+    var connection = new Connection(id, peer);
+    addConnection(connection);
+    sendOffer(id, peer);
+  };
 
   /**
    * ローカル用RTCPeerConnection生成
@@ -38,18 +101,21 @@ $(document).ready(function() {
     };
     pc.addStream(localStream);
     pc.addEventListener('addstream', function(event) {
-      attachMediaStream(remoteVideo, event.stream);
+      var $video = $('<video>').attr('autoplay', true);
+      $('#video_lists').append($video);
+      attachMediaStream($video.get(0), event.stream);
     });
 
     return pc;
   };
 
   /**
-   * シグナリングサーバーへオファーを送信
+   * オファーを送信
    *
+   * @param {String} id 通信相手のID
    * @param {RTCPeerConnection} pc
    */
-  var sendOffer = function(pc) {
+  var sendOffer = function(id, pc) {
     // successCallback
     pc.createOffer(
       function(description) {
@@ -58,7 +124,8 @@ $(document).ready(function() {
           'message',
           {
             type: 'offer',
-            sdp: description.sdp
+            sdp: description.sdp,
+            sendto: id
           }
         );
         createInfoNotify('オファーを送信しました');
@@ -79,25 +146,32 @@ $(document).ready(function() {
    */
   var onGetOfferMessage = function(data) {
     createInfoNotify('オファーを受信しました');
-    peerConnection = createPeerConnection();
-    peerConnection.setRemoteDescription(new RTCSessionDescription(data));
+    var id = data.from;
+    var peer = createPeerConnection();
+    peer.setRemoteDescription(new RTCSessionDescription(data));
+    addConnection(new Connection(id, peer));
+
+    // 自動返信
+    sendAnswer(id, peer);
   };
 
   /**
    * 受信したオファーに対して返答
    *
-   * @param {RTCPeerConnection} pc
+   * @param {String} id
+   * @param {RTCPeerConnection} peer
    */
-  var sendAnswer = function(pc) {
-    peerConnection.createAnswer(
+  var sendAnswer = function(id, peer) {
+    peer.createAnswer(
       // successCallback
       function(description) {
-        pc.setLocalDescription(description);
+        peer.setLocalDescription(description);
         socket.emit(
           'message',
           {
             type: 'answer',
-            sdp: description.sdp
+            sdp: description.sdp,
+            sendto: id
           }
         );
         createInfoNotify('オファーに返答しました');
@@ -118,7 +192,10 @@ $(document).ready(function() {
    */
   var onGetAnswerMessage = function(data) {
     createInfoNotify('オファーが許可されました');
-    peerConnection.setRemoteDescription(new RTCSessionDescription(data));
+
+    var id = data.from;
+    var conn = getConnection(id);
+    conn.peer.setRemoteDescription(new RTCSessionDescription(data));
   };
 
   /**
@@ -127,7 +204,9 @@ $(document).ready(function() {
    * @param {Object} data
    */
   var onGetCandidateMessage = function(data) {
-    peerConnection.addIceCandidate(new RTCIceCandidate(data));
+    var id = data.from;
+    var conn = getConnection(id);
+    conn.peer.addIceCandidate(new RTCIceCandidate(data));
   };
 
   /**
@@ -146,7 +225,14 @@ $(document).ready(function() {
 
   // シグナリングサーバーからメッセージを受信
   socket.on('message', function(data) {
+    console.log(data.type, connections);
     switch (data.type) {
+      case 'call':
+        onGetCallMessage(data);
+        break;
+      case 'response':
+        onGetResponseMessage(data);
+        break;
       case 'offer':
         onGetOfferMessage(data);
         break;
@@ -162,12 +248,11 @@ $(document).ready(function() {
   // ------------------------------------------------------------ //
 
   $(document).on('click', '#btn_call', function() {
-    peerConnection = createPeerConnection();
-    sendOffer(peerConnection);
+    sendCallMessage();
   });
 
   $(document).on('click', '#btn_answer', function() {
-    sendAnswer(peerConnection);
+    //sendAnswer(peerConnection);
   });
 
   // ------------------------------------------------------------ //

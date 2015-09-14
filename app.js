@@ -20,6 +20,14 @@ app.set('socket port', process.env.SOCKET_PORT || 9000);
 server.listen(app.get('socket port'));
 io.on('connection', function(socket) {
   socket.on('message', function(data) {
+    data.from = socket.id;
+
+    var target_id = data.sendto;
+    if (target_id) {
+      socket.to(target_id).emit('message', data);
+      return;
+    }
+
     socket.broadcast.emit('message', data);
   });
 });
