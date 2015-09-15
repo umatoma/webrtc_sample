@@ -41,3 +41,6 @@ $ forever stop webrtc
 ```sh
 $ /usr/bin/turnserver --daemon --verbose -c /etc/turnserver.conf
 ```
+
+# License
+Code released under [the MIT lisence](https://github.com/umatoma/webrtc_sample/blob/master/LICENSE).
