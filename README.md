@@ -21,4 +21,9 @@ $ bower install
 # Start App
 ```sh
 $ npm start
+
+// use forever
+$ forever start --uid "webrtc" ./bin/www
+$ forever restart webrtc
+$ forever stop webrtc
 ```
