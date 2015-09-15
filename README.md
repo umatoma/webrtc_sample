@@ -2,6 +2,7 @@
 WebRTC sample application.
 
 # Rrequire
+- Ubuntu 14.04
 - node.js
 - npm
 
