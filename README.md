@@ -6,6 +6,8 @@ WebRTC sample application.
 - npm
 
 # Set Up
+
+## App / Signaling Server
 ```sh
 $ sudo apt-get update
 $ sudo apt-get install nodejs npm
@@ -18,7 +20,14 @@ $ npm install
 $ bower install
 ```
 
-# Start App
+## STUN / TURN Server
+```sh
+$ apt-get install rfc5766-turn-server
+```
+
+# Start
+
+## App / Signaling Server
 ```sh
 $ npm start
 
@@ -26,4 +35,9 @@ $ npm start
 $ forever start --uid "webrtc" ./bin/www
 $ forever restart webrtc
 $ forever stop webrtc
+```
+
+## STUN / TURN Server
+```sh
+$ /usr/bin/turnserver --daemon --verbose -c /etc/turnserver.conf
 ```
