@@ -21,6 +21,14 @@ $ npm install
 $ bower install
 ```
 
+### dotenv
+Add configuration to `.env` file.
+```
+SIGNALING_SERVER_URL="http://signaling.example.com:9000"
+STUN_SERVER_URL="stun:stun.example.com:3478"
+TURN_SERVER_URL="turn:turn.example.com:3478"
+```
+
 ## STUN / TURN Server
 ```sh
 $ apt-get install rfc5766-turn-server
