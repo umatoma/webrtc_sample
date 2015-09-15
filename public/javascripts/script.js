@@ -9,6 +9,12 @@ $(document).ready(function() {
       OfferToReceiveAudio: false
     }
   };
+  var peerConnectionConfig = {
+    iceServers: [
+      { url: stun_server_url },
+      { url: turn_server_url }
+    ]
+  };
   var localStream = null;
   var connections = {};
   var localVideo = document.getElementById('video_self');
@@ -64,7 +70,7 @@ $(document).ready(function() {
    * @return {RTCPeerConnection}
    */
   var createPeerConnection = function() {
-    var pc = new RTCPeerConnection();
+    var pc = new RTCPeerConnection(peerConnectionConfig);
     pc.onicecandidate = function(event) {
       if (event.candidate) {
         socket.emit(
